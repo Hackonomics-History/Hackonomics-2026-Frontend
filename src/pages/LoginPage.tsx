@@ -85,7 +85,7 @@ export default function LoginPage() {
                     <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
                         <Lock className="text-white" size={32} />
                     </div>
-                    <h1 className="text-3xl font-bold text-gray-800 mb-2">Welcome Back</h1>
+                    <h1 className="text-3xl font-bold text-gray-800 mb-2">My EconoCoach</h1>
                     <p className="text-gray-600">Sign in to your account to continue</p>
                 </div>
 
