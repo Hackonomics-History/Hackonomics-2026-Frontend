@@ -58,3 +58,18 @@ export type NewsItem = {
     title: string;
     description: string;
 };
+
+export type BusinessNewsResponse = {
+    country_code?: string;
+    country_name?: string;
+    news: NewsItem[];
+    last_updated: string | null;
+    next_update: string | null;
+    update_interval_hours: number;
+};
+
+export type RefreshResponse = {
+    status: "queued";
+    country_code: string;
+    task_id: string;
+};
