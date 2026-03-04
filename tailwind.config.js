@@ -6,5 +6,5 @@ export default {
     theme: {
         extend: {}
     },
-    plugin: [],
+    plugin: [require('@tailwindcss/typography')],
 };

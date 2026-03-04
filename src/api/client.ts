@@ -1,5 +1,4 @@
 import axios from "axios"
-import { tokenStore } from "@/auth/tokenStore";
 import { createAppError } from "@/common/errors/createAppError";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -10,14 +9,6 @@ export const api = axios.create({
         "Content-Type": "application/json",
     },
     withCredentials: true,
-});
-
-api.interceptors.request.use((config) => {
-    const token = tokenStore.get();
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
 });
 
 api.interceptors.response.use(
@@ -37,19 +28,14 @@ api.interceptors.response.use(
             originalRequest._retry = true;
 
             try {
-                const res = await axios.post(
+                await axios.post(
                     `${API_BASE_URL}/auth/refresh/`,
                     {},
                     { withCredentials: true }
                 );
 
-                const newAccessToken = res.data.access_token;
-                tokenStore.set(newAccessToken);
-                originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-                // redirect
                 return api(originalRequest);
             } catch (refreshError) {
-                tokenStore.clear();
                 return Promise.reject(createAppError(refreshError));
             }
         }

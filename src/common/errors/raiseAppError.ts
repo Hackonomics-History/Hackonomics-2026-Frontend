@@ -27,7 +27,7 @@ function isAxiosLikeError(error: unknown): error is AxiosLikeError {
 
 export function raiseAppError(
     source: unknown | CatalogKey,
-    navigate: NavigateFunction,
+    navigate?: NavigateFunction,
     overrideMessage?: string
 ): AppError {
     let appError: AppError;
@@ -70,6 +70,9 @@ export function raiseAppError(
         };
     }
 
-    handleAppError(appError, navigate);
+    if (navigate) {
+        handleAppError(appError, navigate);
+    }
+
     return appError;
 }

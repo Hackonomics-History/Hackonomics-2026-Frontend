@@ -15,9 +15,10 @@ import {
 } from "lucide-react";
 import { raiseAppError } from "@/common/errors/raiseAppError";
 
-import Card from "../components/ui/Card";
-import Button from "../components/ui/Button";
-import Input from "../components/ui/Input";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import Input from "@/components/ui/Input";
+import AnimatedText from "@/components/ui/AnimatedText";
 
 // API Types
 import type { UserInfo, Country, ExchangeRate } from "@/api/types";
@@ -232,7 +233,7 @@ export default function MyPage() {
         setError(null);
 
         try {
-            await api.post("/account/me/", {
+            await api.put("/account/me/", {
                 country_code: selectedCountry.code,
                 currency: selectedCurrency,
                 annual_income: annualIncome,
@@ -298,7 +299,10 @@ export default function MyPage() {
                 {saveSuccess && (
                     <div className="bg-green-50 border border-green-200 rounded-xl p-4 flex items-center space-x-3">
                         <Check className="text-green-500" size={20} />
-                        <p className="text-green-800 font-medium text-sm">Settings saved successfully!</p>
+                        <AnimatedText
+                            text="Settings saved successfully!"
+                            className="text-green-800 font-medium text-sm"
+                        />
                     </div>
                 )}
 
@@ -306,7 +310,10 @@ export default function MyPage() {
                 {error && (
                     <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-start space-x-3">
                         <AlertCircle className="text-red-500 flex-shrink-0 mt-0.5" size={20} />
-                        <p className="text-red-800 font-medium text-sm">{error}</p>
+                        <AnimatedText
+                            text={error}
+                            className="text-red-800 font-medium text-sm"
+                        />
                     </div>
                 )}
 
@@ -430,9 +437,10 @@ export default function MyPage() {
                         {exchangeRate && (
                             <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-xl">
                                 <p className="text-sm text-gray-600 mb-1">Current Exchange Rate</p>
-                                <p className="text-2xl font-bold text-gray-800">
-                                    1 {exchangeRate.base} = {exchangeRate.rate.toFixed(4)} {exchangeRate.target}
-                                </p>
+                                <AnimatedText
+                                    text={`1 ${exchangeRate.base} = ${exchangeRate.rate.toFixed(4)} ${exchangeRate.target}`}
+                                    className="text-2xl font-bold text-gray-800"
+                                />
                             </div>
                         )}
                     </Card>
@@ -523,9 +531,10 @@ export default function MyPage() {
 
                             <div className="p-6 bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-xl">
                                 <p className="text-sm text-gray-600 mb-2">Current Rate</p>
-                                <p className="text-3xl font-bold text-gray-800 mb-4">
-                                    1 {myExchangeRate.base} = {myExchangeRate.rate.toFixed(4)} {myExchangeRate.target}
-                                </p>
+                                <AnimatedText
+                                    text={`1 ${myExchangeRate.base} = ${myExchangeRate.rate.toFixed(4)} ${myExchangeRate.target}`}
+                                    className="text-3xl font-bold text-gray-800 mb-4"
+                                />
 
                                 {myExchangeRate.lastUpdated && (
                                     <div className="flex items-center space-x-2 text-sm text-gray-600">
