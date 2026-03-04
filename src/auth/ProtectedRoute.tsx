@@ -21,9 +21,8 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
             }
 
             try {
-                const res = await api.post("/auth/refresh/");
-                const newAccessToken = res.data.access_token;
-                setAccessToken(newAccessToken);
+                await api.post("/auth/refresh/", {}, { withCredentials: true });
+                setAccessToken("authenticated");
             } catch {
                 // refresh failed -> login again
             } finally {

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
-import { tokenStore } from "./tokenStore";
 import { AuthContext } from "./AuthContext";
 import { api } from "@/api/client";
 
@@ -11,13 +10,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     useEffect(() => {
         const bootstrap = async () => {
             try {
-                const res = await api.post("/auth/refresh/", {}, { withCredentials: true });
-                const token = res.data.access_token;
-
-                tokenStore.set(token);
-                setAccessToken(token);
+                await api.post("/auth/refresh/", {}, { withCredentials: true });
+                setAccessToken("authenticated");
             } catch {
-                tokenStore.clear();
                 setAccessToken(null);
             } finally {
                 setLoading(false);
@@ -27,22 +22,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         bootstrap();
     }, []);
 
-    const login = (access: string) => {
-        tokenStore.set(access)
-        setAccessToken(access);
+    const login = () => {
+        setAccessToken("authenticated");
     };
 
     const logout = () => {
-        tokenStore.clear();
         setAccessToken(null);
     };
 
     const setToken = (token: string | null) => {
-        if (token) {
-            tokenStore.set(token);
-        } else {
-            tokenStore.clear();
-        }
         setAccessToken(token);
     }
 

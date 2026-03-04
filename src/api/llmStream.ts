@@ -1,5 +1,3 @@
-import { api } from "@/api/client";
-
 type StreamPayload = {
     question: string;
     news: any[];
@@ -10,13 +8,14 @@ export async function streamChat(
     onChunk: (chunk: string) => void,
     signal?: AbortSignal
 ) {
+
     const response = await fetch(
         `${import.meta.env.VITE_API_BASE_URL}/news/chat/stream/`,
         {
             method: "POST",
+            credentials: "include",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("access_token")}`,
             },
             body: JSON.stringify(payload),
             signal,
@@ -36,12 +35,9 @@ export async function streamChat(
 
         const chunk = decoder.decode(value, { stream: true });
 
-        // SSE format: data: <token>
-        const lines = chunk.split("\n");
-        for (const line of lines) {
+        for (const line of chunk.split("\n")) {
             if (line.startsWith("data: ")) {
-                const token = line.replace("data: ", "");
-                onChunk(token);
+                onChunk(line.slice(6));
             }
         }
     }
