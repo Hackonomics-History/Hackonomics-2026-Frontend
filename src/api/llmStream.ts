@@ -1,6 +1,8 @@
+import type { NewsItem } from "@/api/types";
+
 type StreamPayload = {
     question: string;
-    news: any[];
+    news: NewsItem[];
 };
 
 export async function streamChat(
@@ -29,15 +31,26 @@ export async function streamChat(
     const reader = response.body.getReader();
     const decoder = new TextDecoder("utf-8");
 
+    let buffer = "";
+
     while (true) {
         const { done, value } = await reader.read();
         if (done) break;
 
-        const chunk = decoder.decode(value, { stream: true });
+        buffer += decoder.decode(value, { stream: true });
 
-        for (const line of chunk.split("\n")) {
-            if (line.startsWith("data: ")) {
-                onChunk(line.slice(6));
+        const lines = buffer.split("\n");
+        buffer = lines.pop() || "";
+
+        for (const line of lines) {
+            const trimmed = line.trim();
+            // ignore keepalive
+            if (!trimmed || trimmed.startsWith(":")) continue;
+            // SSE data
+            if (trimmed.startsWith("data:")) {
+                const chunk = trimmed.slice(5).trimStart();
+                if (chunk === "done") return;
+                onChunk(chunk);
             }
         }
     }

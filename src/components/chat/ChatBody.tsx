@@ -63,16 +63,22 @@ export default function ChatBody({ news }: { news: NewsItem[] }) {
             await streamChat(
                 { question: q, news },
                 (chunk) => {
+                    if (chunk === "done") return;
+
                     setMessages((prev) =>
                         prev.map((m) =>
-                            m.id === assistantId ? { ...m, text: m.text + chunk } : m
+                            m.id === assistantId
+                                ? { ...m, text: m.text + chunk }
+                                : m
                         )
                     );
                 },
                 abortRef.current.signal
             );
         } catch (err) {
-            if ((err as any)?.name === "AbortError") return;
+            if (err instanceof DOMException && err.name === "AbortError") {
+                return;
+            }
 
             raiseAppError(err, undefined, "Chat failed");
 
@@ -116,8 +122,8 @@ export default function ChatBody({ news }: { news: NewsItem[] }) {
                         >
                             <div
                                 className={`max-w-[80%] px-4 py-2 rounded-2xl ${m.role === "user"
-                                        ? "bg-blue-600 text-white"
-                                        : "bg-gray-100 text-gray-800"
+                                    ? "bg-blue-600 text-white"
+                                    : "bg-gray-100 text-gray-800"
                                     }`}
                             >
                                 {m.role === "assistant" ? (
